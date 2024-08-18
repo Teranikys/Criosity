@@ -11,4 +11,8 @@ add_executable(Criosity main.c
         memory.c
         debug.h
         debug.c
+        value.c
+        value.h
+        vm.c
+        vm.h
 )
