@@ -8,6 +8,8 @@
 #include "debug.h"
 #include "vm.h"
 
+#include <stdlib.h>
+
 VM vm;
 
 static void resetStack() {
@@ -24,6 +26,12 @@ void freeVM() {
 static InterpretResult run() {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+#define BINARY_OP(op) \
+    do { \
+        double b = pop(); \
+        double a = pop(); \
+        push(a op b); \
+    } while (false)
 
     for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
@@ -44,14 +52,37 @@ static InterpretResult run() {
                 push(constant);
                 break;
             }
+            case OP_NEGATE: {
+                push(-pop());
+                break;
+            }
+            case OP_ADD: {
+                BINARY_OP(+);
+                break;
+            }
+            case OP_SUBTRACT: {
+                BINARY_OP(-);
+                break;
+            }
+            case OP_MULTIPLY: {
+                BINARY_OP(*);
+                break;
+            }
+            case OP_DIVIDE: {
+                BINARY_OP(/);
+                break;
+            }
             case OP_RETURN: {
                 printValue(pop());
                 printf("\n");
                 return INTERPRET_OK;
             }
+            default:
+                exit(1);
         }
     }
 
+#undef BINARY_OP
 #undef READ_BYTE
 #undef READ_CONSTANT
 }

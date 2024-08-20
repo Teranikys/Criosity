@@ -15,12 +15,20 @@ int main(int argc, const char* argv[]) {
     writeChunk(&chunk, OP_CONSTANT, 1);
     writeChunk(&chunk, constant, 1);
 
-
-    const int constant1 = addConstant(&chunk, 3.4);
+    const int constant1 = addConstant(&chunk, 4.4);
     writeChunk(&chunk, OP_CONSTANT, 1);
     writeChunk(&chunk, constant1, 1);
 
-    writeChunk(&chunk, OP_RETURN, 1);
+    writeChunk(&chunk, OP_ADD, 1);
+
+    const int constant2 = addConstant(&chunk, 5.6);
+    writeChunk(&chunk, OP_CONSTANT, 2);
+    writeChunk(&chunk, constant2, 2);
+
+    writeChunk(&chunk, OP_DIVIDE, 2);
+    writeChunk(&chunk, OP_NEGATE, 2);
+
+    writeChunk(&chunk, OP_RETURN, 2);
 
     // disassembleChunk(&chunk, "test chunk");
     interpret(&chunk);
